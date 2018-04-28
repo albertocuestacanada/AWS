@@ -160,6 +160,7 @@ Resources:
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 192.168.0.0/24
+      AvailabilityZone: "eu-west-1a"
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
@@ -168,6 +169,7 @@ Resources:
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 192.168.1.0/24
+      AvailabilityZone: "eu-west-1b"
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 01326c75-c2d3-4eea-9384-38308d2e60c0
@@ -203,6 +205,26 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
+  MyALB:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets:
+        - !Ref Subnet1
+        - !Ref Subnet2
+      SecurityGroups:
+        - !Ref WebSG
+  MyALBTargetGroup:    
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckPath: /healthy.html
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      Name: MyALBTargetGroup
+      Port: 80
+      Protocol: HTTP
+      VpcId: !Ref MyVPC
   MediaAssets:
     Type: 'AWS::S3::Bucket'
     Properties:
@@ -210,6 +232,14 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859
+  MyInternetGateway:
+    Type: "AWS::EC2::InternetGateway"
+    Properties: {}
+  MyVPNGatewayAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties: 
+      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVPC
   WordpressCode:
     Type: 'AWS::S3::Bucket'
     Properties:
