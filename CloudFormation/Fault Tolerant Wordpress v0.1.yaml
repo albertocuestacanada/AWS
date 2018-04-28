@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Designer':
+    2b542b54-34f8-4fd2-bfb7-cfaa78cc46c0:
+      size:
+        width: 140
+        height: 140
+      position:
+        x: 183
+        'y': 194
+      z: 0
+      embeds: []
+    ee03fb66-b311-48a3-a317-a9b788593fb9:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 90
+        'y': 50
+      z: 0
+      embeds: []
+      iscontainedinside:
+        - 2b542b54-34f8-4fd2-bfb7-cfaa78cc46c0
+    6dda432d-9bd9-45bc-85f5-405e119a03d7:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 350
+        'y': 50
+      z: 0
+      embeds: []
+      iscontainedinside:
+        - 2b542b54-34f8-4fd2-bfb7-cfaa78cc46c0
+    348fac11-5d11-444a-9278-21ad1052c1b7:
+      source:
+        id: 6dda432d-9bd9-45bc-85f5-405e119a03d7
+      target:
+        id: 2b542b54-34f8-4fd2-bfb7-cfaa78cc46c0
+      z: 2
+Resources:
+  WPVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties: {}
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 2b542b54-34f8-4fd2-bfb7-cfaa78cc46c0
+  WebDMZ:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: WebDMZ
+      GroupDescription: Security Group for Web Front Ends
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref WPVPC
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: ee03fb66-b311-48a3-a317-a9b788593fb9
+  RDSSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: RDSSG
+      GroupDescription: Security Group for Relational Database Storage
+      SourceSecurityGroupId:
+        IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        SourceSecurityGroupId:
+          Ref: WebDMZ
+      VpcId: !Ref WPVPC
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6dda432d-9bd9-45bc-85f5-405e119a03d7
