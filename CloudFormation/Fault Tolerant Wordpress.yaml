@@ -172,18 +172,34 @@ Resources:
       'AWS::CloudFormation::Designer':
         id: 01326c75-c2d3-4eea-9384-38308d2e60c0
   WebSG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref MyVPC
-      GroupDescription: Web front ends
+      GroupDescription: Web front ends are open to traffic on port 80 for HTTP from all IPs and from to SSH traffic on port 22 from all IPs. Harden for real life, please.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
     Metadata:
       'AWS::CloudFormation::Designer':
         id: c70135ad-ad56-4037-9161-7885c1babb50
   RDSSG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref MyVPC
       GroupDescription: Back end databases
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          SourceSecurityGroupId: !Ref WebSG
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
