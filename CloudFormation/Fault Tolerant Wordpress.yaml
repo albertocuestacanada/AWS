@@ -10,8 +10,6 @@ Metadata:
         'y': 70
       z: 0
       embeds:
-        - 9de9ab0a-62ae-45cd-8a76-b768b0a6a6bb
-        - 4386ccdc-c62b-41cf-aaae-00995d917d2f
         - 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
         - c70135ad-ad56-4037-9161-7885c1babb50
         - 01326c75-c2d3-4eea-9384-38308d2e60c0
@@ -26,9 +24,10 @@ Metadata:
       z: 1
       parent: 37895652-3013-4912-a62b-7397f57cc016
       embeds:
-        - f5f5ed4f-e937-4ddf-8437-afd9c6a6f6bb
         - 0f31f036-fbe6-44e4-aff1-cc13b8c2a364
       iscontainedinside:
+        - 37895652-3013-4912-a62b-7397f57cc016
+        - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
@@ -50,9 +49,10 @@ Metadata:
       z: 1
       parent: 37895652-3013-4912-a62b-7397f57cc016
       embeds:
-        - cda1bfb0-a95b-4112-8d42-5cf2fbcba6b5
         - 68c2d1f1-d954-4978-86fc-ca248c825751
       iscontainedinside:
+        - 37895652-3013-4912-a62b-7397f57cc016
+        - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
@@ -85,6 +85,8 @@ Metadata:
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
+        - 37895652-3013-4912-a62b-7397f57cc016
+        - 37895652-3013-4912-a62b-7397f57cc016
     3eaf1acb-f3e4-43e9-985b-04ba7f3fea31:
       size:
         width: 60
@@ -96,6 +98,8 @@ Metadata:
       parent: 37895652-3013-4912-a62b-7397f57cc016
       embeds: []
       iscontainedinside:
+        - 37895652-3013-4912-a62b-7397f57cc016
+        - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
         - 37895652-3013-4912-a62b-7397f57cc016
@@ -125,64 +129,6 @@ Metadata:
       z: 2
       parent: 01326c75-c2d3-4eea-9384-38308d2e60c0
       embeds: []
-    4386ccdc-c62b-41cf-aaae-00995d917d2f:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 430
-        'y': 90
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds: []
-    9de9ab0a-62ae-45cd-8a76-b768b0a6a6bb:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 600
-        'y': 90
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds: []
-    f5f5ed4f-e937-4ddf-8437-afd9c6a6f6bb:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 320
-        'y': 290
-      z: 2
-      parent: b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
-      embeds: []
-    cda1bfb0-a95b-4112-8d42-5cf2fbcba6b5:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 530
-        'y': 290
-      z: 2
-      parent: 01326c75-c2d3-4eea-9384-38308d2e60c0
-      embeds: []
-    85fb1eb0-3a4f-4916-8d09-2dbda8a18317:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 276
-        'y': -56
-      z: 0
-      embeds: []
-    ab833126-00ef-43d9-8560-46cc0dc3b19f:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 492
-        'y': -58
-      z: 0
-      embeds: []
     4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859:
       size:
         width: 60
@@ -204,7 +150,8 @@ Metadata:
 Resources:
   MyVPC:
     Type: 'AWS::EC2::VPC'
-    Properties: {}
+    Properties:
+      CidrBlock: 192.168.0.0/16
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 37895652-3013-4912-a62b-7397f57cc016
@@ -212,6 +159,7 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
+      CidrBlock: 192.168.0.0/24
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
@@ -219,6 +167,7 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
+      CidrBlock: 192.168.1.0/24
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 01326c75-c2d3-4eea-9384-38308d2e60c0
@@ -226,6 +175,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref MyVPC
+      GroupDescription: Web front ends
     Metadata:
       'AWS::CloudFormation::Designer':
         id: c70135ad-ad56-4037-9161-7885c1babb50
@@ -233,68 +183,22 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref MyVPC
+      GroupDescription: Back end databases
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
-  EC21:
-    Type: 'AWS::EC2::LaunchTemplate'
-    Properties:
-      Name: EC2-1
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 0f31f036-fbe6-44e4-aff1-cc13b8c2a364
-  EC22:
-    Type: 'AWS::EC2::LaunchTemplate'
-    Properties:
-      Name: EC2-2
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 68c2d1f1-d954-4978-86fc-ca248c825751
-  MyELB:
-    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 4386ccdc-c62b-41cf-aaae-00995d917d2f
-  MyASG:
-    Type: 'AWS::AutoScaling::AutoScalingGroup'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 9de9ab0a-62ae-45cd-8a76-b768b0a6a6bb
-  RDS1:
-    Type: 'AWS::RDS::DBInstance'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: f5f5ed4f-e937-4ddf-8437-afd9c6a6f6bb
-  RDS2:
-    Type: 'AWS::RDS::DBInstance'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: cda1bfb0-a95b-4112-8d42-5cf2fbcba6b5
-  MyCF:
-    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 85fb1eb0-3a4f-4916-8d09-2dbda8a18317
-  R53:
-    Type: 'AWS::Route53::RecordSet'
-    Properties: {}
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: ab833126-00ef-43d9-8560-46cc0dc3b19f
   MediaAssets:
     Type: 'AWS::S3::Bucket'
-    Properties: {}
+    Properties:
+      BucketName: albertocuesta-media-assets
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859
   WordpressCode:
     Type: 'AWS::S3::Bucket'
-    Properties: {}
+    Properties:
+      BucketName: albertocuesta-wordpress-code
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b231a9ba-118e-4556-b2f7-ada6a768b920
+
