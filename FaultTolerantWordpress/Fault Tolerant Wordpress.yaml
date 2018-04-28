@@ -280,4 +280,13 @@ Resources:
       StorageType: gp2
       VPCSecurityGroups:
         - !Ref RDSSG
-
+  MyRecordSet:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+    Type: 'AWS::Route53::RecordSet'    
+    Properties:
+      Name: albertocuesta.click.
+      HostedZoneName: albertocuesta.click.
+      Type: A
+      AliasTarget: 
+        DNSName: !GetAtt MyALB.DNSName
+        HostedZoneId: !GetAtt MyALB.CanonicalHostedZoneID
