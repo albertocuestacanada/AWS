@@ -1,152 +1,4 @@
 AWSTemplateFormatVersion: 2010-09-09
-Metadata:
-  'AWS::CloudFormation::Designer':
-    37895652-3013-4912-a62b-7397f57cc016:
-      size:
-        width: 450
-        height: 450
-      position:
-        x: 240
-        'y': 70
-      z: 0
-      embeds:
-        - 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
-        - c70135ad-ad56-4037-9161-7885c1babb50
-        - 01326c75-c2d3-4eea-9384-38308d2e60c0
-        - b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
-    b1c5f67e-d30a-493a-8ea4-2a18b9fd2882:
-      size:
-        width: 200
-        height: 230
-      position:
-        x: 250
-        'y': 170
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds:
-        - 0f31f036-fbe6-44e4-aff1-cc13b8c2a364
-      iscontainedinside:
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-    01326c75-c2d3-4eea-9384-38308d2e60c0:
-      size:
-        width: 210
-        height: 230
-      position:
-        x: 460
-        'y': 170
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds:
-        - 68c2d1f1-d954-4978-86fc-ca248c825751
-      iscontainedinside:
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-    c70135ad-ad56-4037-9161-7885c1babb50:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 272
-        'y': 92
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds: []
-      iscontainedinside:
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-    3eaf1acb-f3e4-43e9-985b-04ba7f3fea31:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 264
-        'y': 429
-      z: 1
-      parent: 37895652-3013-4912-a62b-7397f57cc016
-      embeds: []
-      iscontainedinside:
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-        - 37895652-3013-4912-a62b-7397f57cc016
-    0f31f036-fbe6-44e4-aff1-cc13b8c2a364:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 320
-        'y': 210
-      z: 2
-      parent: b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
-      embeds: []
-    68c2d1f1-d954-4978-86fc-ca248c825751:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 530
-        'y': 210
-      z: 2
-      parent: 01326c75-c2d3-4eea-9384-38308d2e60c0
-      embeds: []
-    4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 730
-        'y': 180
-      z: 0
-      embeds: []
-    b231a9ba-118e-4556-b2f7-ada6a768b920:
-      size:
-        width: 60
-        height: 60
-      position:
-        x: 730
-        'y': 300
-      z: 0
-      embeds: []
 Resources:
   MyVPC:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
@@ -192,20 +44,6 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: c70135ad-ad56-4037-9161-7885c1babb50
-  RDSSG:
-    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      VpcId: !Ref MyVPC
-      GroupDescription: Back end databases
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '3306'
-          ToPort: '3306'
-          SourceSecurityGroupId: !Ref WebSG
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
   MyALB:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -237,47 +75,14 @@ Resources:
     Properties: 
       InternetGatewayId: !Ref MyInternetGateway
       VpcId: !Ref MyVPC
-  WordpressCode:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      BucketName: albertocuesta-wordpress-code
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: b231a9ba-118e-4556-b2f7-ada6a768b920
-  MediaAssets:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      BucketName: albertocuesta-media-assets
-      AccessControl: PublicRead
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859
-  MyDBSubnetGroup:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnet-group.html
-    Type: "AWS::RDS::DBSubnetGroup"
+  MyRecordSet:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+    Type: 'AWS::Route53::RecordSet'    
     Properties: 
-      DBSubnetGroupDescription: All subnets in my VPC
-      DBSubnetGroupName: MyDBSubnetGroup
-      SubnetIds:
-        - !Ref Subnet1
-        - !Ref Subnet2
-  RDSInstance:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-rds-database-instance.html
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      AllocatedStorage: 5
-      DBInstanceClass: db.t2.micro
-      DBSubnetGroupName: !Ref MyDBSubnetGroup # This specifies the DB Instance within the VPC that the subnets belong to.
-      Engine: MySQL
-      EngineVersion: 5.6.27
-      MasterUsername: acloudguru
-      MasterUserPassword: acloudguru
-      MultiAZ: true
-      Port: 3306
-      PubliclyAccessible: false
-      StorageType: gp2
-      VPCSecurityGroups:
-        - !Ref RDSSG
+      AliasTarget: 
+        DNSName: !GetAtt MyALB.DNSName
+        HostedZoneId: !GetAtt MyALB.CanonicalHostedZoneID
+      Name: albertocuesta.click.
+      Type: A
+
 
