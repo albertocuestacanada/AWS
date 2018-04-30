@@ -1,5 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 Outputs:
+  WordpressVPC:
+    Description: The VPC for the Wordpress project.
+    Value: !Ref MyVPC
+    Export:
+      Name: WordpressVPC
   WordpressSubnet1:
     Description: The subnet in the eu-west-1a region and zone for the Wordpress project.
     Value: !Ref Subnet1
@@ -88,27 +93,6 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
-  MyALB:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Scheme: internet-facing
-      Subnets:
-        - !Ref Subnet1
-        - !Ref Subnet2
-      SecurityGroups:
-        - !Ref WebSG
-  MyALBTargetGroup: 
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html   
-    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
-    Properties:
-      HealthCheckPath: /healthy.html
-      HealthCheckPort: 80
-      HealthCheckProtocol: HTTP
-      Name: MyALBTargetGroup
-      Port: 80
-      Protocol: HTTP
-      VpcId: !Ref MyVPC
   MyInternetGateway:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
     Type: "AWS::EC2::InternetGateway"
@@ -136,13 +120,3 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 4c36fbbd-21cc-4ef2-a3c6-8c8c9bda2859
-  MyRecordSet:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
-    Type: 'AWS::Route53::RecordSet'    
-    Properties:
-      Name: albertocuesta.click.
-      HostedZoneName: albertocuesta.click.
-      Type: A
-      AliasTarget: 
-        DNSName: !GetAtt MyALB.DNSName
-        HostedZoneId: !GetAtt MyALB.CanonicalHostedZoneID

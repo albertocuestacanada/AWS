@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  MyELB:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets:
+        - !ImportValue WordpressSubnet1
+        - !ImportValue WordpressSubnet2
+      SecurityGroups:
+        - !ImportValue WordpressWebSG
+  MyELBTargetGroup: 
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html   
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckPath: /healthy.html
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      Name: MyELBTargetGroup
+      Port: 80
+      Protocol: HTTP
+      VpcId: !ImportValue WordpressVPC
+  MyRecordSet:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+    Type: 'AWS::Route53::RecordSet'    
+    Properties:
+      Name: albertocuesta.click.
+      HostedZoneName: albertocuesta.click.
+      Type: A
+      AliasTarget: 
+        DNSName: !GetAtt MyELB.DNSName
+        HostedZoneId: !GetAtt MyELB.CanonicalHostedZoneID
