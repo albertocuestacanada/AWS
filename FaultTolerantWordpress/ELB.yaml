@@ -10,6 +10,7 @@ Resources:
         - !ImportValue WordpressSubnet2
       SecurityGroups:
         - !ImportValue WordpressWebSG
+
   MyELBTargetGroup: 
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html   
     Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
@@ -17,10 +18,26 @@ Resources:
       HealthCheckPath: /healthy.html
       HealthCheckPort: 80
       HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 6
+      HealthyThresholdCount: 2
       Name: MyELBTargetGroup
       Port: 80
       Protocol: HTTP
+      Targets:
+        - Id: !ImportValue WordpressServer
+          Port: 80
       VpcId: !ImportValue WordpressVPC
+
+  MyELBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties: 
+      DefaultActions:
+        - TargetGroupArn: !Ref MyELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref MyELB
+      Port: 80
+      Protocol: HTTP
+
   MyRecordSet:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
     Type: 'AWS::Route53::RecordSet'    
