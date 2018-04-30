@@ -22,9 +22,12 @@ Resources:
     Type: "AWS::EC2::Instance"
     Properties: 
       # https://hackernoon.com/attach-an-iam-role-to-an-ec2-instance-with-cloudformation-33c517a8d4c3
-      IamInstanceProfile: S3-Admin-Access
-      ImageId: !FindInMap [AMIs, !Ref 'AWS::Region', Name]
+      IamInstanceProfile: S3-Admin-Access # It might be a good idea to create this role also with CloudFormation
+      ImageId: !FindInMap [ AMIs, !Ref 'AWS::Region', Name]
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
+      # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-importvalue.html
+      SecurityGroupIds: 
+        - !ImportValue WordpressWebSGGroupId
       SubnetId: !ImportValue WordpressSubnet1 # When an autoscaling group is created we will use more than one subnet
 

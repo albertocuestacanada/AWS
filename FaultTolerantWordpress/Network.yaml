@@ -20,6 +20,15 @@ Outputs:
     Value: !Ref WebSG
     Export:
       Name: WordpressWebSG
+  # EC2 Instances require the Security Group Id instead of the Security Group Resource
+  WordpressWebSGGroupId:
+    Description: The Security Group Id to use with web servers in the Wordpress project.
+    Value:
+      Fn::GetAtt:
+        - WebSG
+        - GroupId
+    Export:
+      Name: WordpressWebSGGroupId
 Resources:
   MyVPC:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
