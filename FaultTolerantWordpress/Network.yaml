@@ -1,30 +1,36 @@
 AWSTemplateFormatVersion: 2010-09-09
 Outputs:
+
   WordpressVPC:
     Description: The VPC for the Wordpress project.
     Value: !Ref MyVPC
     Export:
       Name: WordpressVPC
+
   WordpressSubnet1:
     Description: The subnet in the eu-west-1a region and zone for the Wordpress project.
     Value: !Ref Subnet1
     Export:
       Name: WordpressSubnet1
+
   WordpressSubnet2:
     Description: The subnet in the eu-west-1a region and zone for the Wordpress project.
     Value: !Ref Subnet2
     Export:
       Name: WordpressSubnet2
+
   WordpressRDSSG:
     Description: The Security Group to use with databases in the Wordpress project.
     Value: !Ref RDSSG
     Export:
       Name: WordpressRDSSG
+
   WordpressWebSG:
     Description: The Security Group to use with web servers in the Wordpress project.
     Value: !Ref WebSG
     Export:
       Name: WordpressWebSG
+
   # EC2 Instances require the Security Group Id instead of the Security Group Resource
   WordpressWebSGGroupId:
     Description: The Security Group Id to use with web servers in the Wordpress project.
@@ -34,7 +40,9 @@ Outputs:
         - GroupId
     Export:
       Name: WordpressWebSGGroupId
+
 Resources:
+
   MyVPC:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
     Type: 'AWS::EC2::VPC'
@@ -43,24 +51,29 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 37895652-3013-4912-a62b-7397f57cc016
+
   Subnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 192.168.0.0/24
       AvailabilityZone: "eu-west-1a"
+      MapPublicIpOnLaunch: true # I should do separate subnets for non-internet facing servers, such as RDS servers
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b1c5f67e-d30a-493a-8ea4-2a18b9fd2882
+
   Subnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: 192.168.1.0/24
       AvailabilityZone: "eu-west-1b"
+      MapPublicIpOnLaunch: true # I should do separate subnets for non-internet facing servers, such as RDS servers
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 01326c75-c2d3-4eea-9384-38308d2e60c0
+
   WebSG:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: 'AWS::EC2::SecurityGroup'
@@ -79,6 +92,7 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: c70135ad-ad56-4037-9161-7885c1babb50
+
   RDSSG:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: 'AWS::EC2::SecurityGroup'
@@ -93,16 +107,43 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
+
   MyInternetGateway:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
     Type: "AWS::EC2::InternetGateway"
     Properties: {}
+
   MyVPNGatewayAttachment:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-gateway-attachment.html
     Type: "AWS::EC2::VPCGatewayAttachment"
     Properties: 
       InternetGatewayId: !Ref MyInternetGateway
       VpcId: !Ref MyVPC
+
+  MyRouteTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties: 
+      VpcId: !Ref MyVPC
+
+  MyInternetRoute:
+    Type: "AWS::EC2::Route"
+    Properties: 
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref MyInternetGateway
+      RouteTableId: !Ref MyRouteTable
+
+  MyRouteTableAssociationSubnet1:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref Subnet1
+
+  MyRouteTableAssociationSubnet2:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref Subnet2
+
   WordpressCode:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
     Type: 'AWS::S3::Bucket'
@@ -111,6 +152,7 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: b231a9ba-118e-4556-b2f7-ada6a768b920
+
   MediaAssets:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
     Type: 'AWS::S3::Bucket'
