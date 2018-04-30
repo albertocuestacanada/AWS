@@ -15,6 +15,11 @@ Outputs:
     Value: !Ref RDSSG
     Export:
       Name: WordpressRDSSG
+  WordpressWebSG:
+    Description: The Security Group to use with web servers in the Wordpress project.
+    Value: !Ref WebSG
+    Export:
+      Name: WordpressWebSG
 Resources:
   MyVPC:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
