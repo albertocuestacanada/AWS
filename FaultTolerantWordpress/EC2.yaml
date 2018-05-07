@@ -31,7 +31,7 @@ Mappings:
 Resources:
 
   # https://aws.amazon.com/blogs/devops/authenticated-file-downloads-with-cloudformation/
-  S3AdminInstanceRole:
+  S3MinimalInstanceRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -44,38 +44,34 @@ Resources:
           - sts:AssumeRole
       Path: "/"
 
-  S3AdminRolePolicies:
+  # Allows to download s3 files from the wordpress install bucket
+  S3MinimalRolePolicies:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: S3Admin
+      PolicyName: S3Minimal
       PolicyDocument:
         Statement:
+        # Note that there is a statement for object actions and another for bucket actions, and that they refer to different resources.
         - Action:
-          - "s3:*"
+          - "s3:GetObject"
           Effect: Allow
-          Resource: "*"
-      Roles:
-      - !Ref S3AdminInstanceRole
-
-  IAMViewRolePolicies:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: IAMView
-      PolicyDocument:
-        Statement:
+          Resource: "arn:aws:s3:::albertocuesta-wordpress-install/*"
         - Action:
-          - iam:ListRoles
+          - "s3:ListBucket" # Needed even if you know the path to the object
+          - "s3:ListAllMyBuckets" # Needed for console use
+          - "s3:GetBucketLocation" # Needed for console use
           Effect: Allow
-          Resource: "*"
+          Resource: "arn:aws:s3:::albertocuesta-wordpress-install"
       Roles:
-      - !Ref S3AdminInstanceRole
+      - !Ref S3MinimalInstanceRole
 
-  S3AdminAccessInstanceProfile:
+  # Profile with as few permissions as needed to perform the needed functions
+  S3MinimalInstanceProfile:
       Type: "AWS::IAM::InstanceProfile"
       Properties:
         Path: "/"
         Roles:
-          - !Ref S3AdminInstanceRole
+          - !Ref S3MinimalInstanceRole
 
   WordpressServer:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
@@ -86,7 +82,7 @@ Resources:
       AWS::CloudFormation::Authentication:  
         S3AccessCred:  
           type: S3  
-          roleName: !Ref S3AdminInstanceRole  # I should use a read-only role here
+          roleName: !Ref S3MinimalInstanceRole  # I should use a read-only role here
           buckets:  
             - albertocuesta-wordpress-install    
       AWS::CloudFormation::Init:
@@ -130,7 +126,7 @@ Resources:
         Timeout: PT5M
     Properties: 
       # https://hackernoon.com/attach-an-iam-role-to-an-ec2-instance-with-cloudformation-33c517a8d4c3
-      IamInstanceProfile: !Ref S3AdminAccessInstanceProfile # It might be a good idea to create this role also with CloudFormation
+      IamInstanceProfile: !Ref S3MinimalInstanceProfile
       ImageId: !FindInMap [ AMIs, !Ref 'AWS::Region', Name]
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
