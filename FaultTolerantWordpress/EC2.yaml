@@ -30,12 +30,52 @@ Mappings:
 
 Resources:
 
+  # https://aws.amazon.com/blogs/devops/authenticated-file-downloads-with-cloudformation/
+  S3AdminInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+
+  S3AdminRolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: S3Admin
+      PolicyDocument:
+        Statement:
+        - Action:
+          - "s3:*"
+          Effect: Allow
+          Resource: "*"
+      Roles:
+      - !Ref S3AdminInstanceRole
+
+  IAMViewRolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: IAMView
+      PolicyDocument:
+        Statement:
+        - Action:
+          - iam:ListRoles
+          Effect: Allow
+          Resource: "*"
+      Roles:
+      - !Ref S3AdminInstanceRole
+
   S3AdminAccessInstanceProfile:
       Type: "AWS::IAM::InstanceProfile"
       Properties:
         Path: "/"
         Roles:
-          - S3-Admin-Access
+          - !Ref S3AdminInstanceRole
 
   WordpressServer:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
@@ -46,7 +86,7 @@ Resources:
       AWS::CloudFormation::Authentication:  
         S3AccessCred:  
           type: S3  
-          roleName: S3-Admin-Access  # I should use a read-only role here
+          roleName: !Ref S3AdminInstanceRole  # I should use a read-only role here
           buckets:  
             - albertocuesta-wordpress-install    
       AWS::CloudFormation::Init:
