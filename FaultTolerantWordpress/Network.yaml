@@ -3,6 +3,7 @@ Description: 'This template creates some basic infrastructure with which to buil
 
 Outputs:
 
+  # --- Networks ---
   WordpressVPC:
     Description: The VPC for the Wordpress project.
     Value: !Ref MyVPC
@@ -21,6 +22,7 @@ Outputs:
     Export:
       Name: WordpressSubnet2
 
+  # --- Security Groups ---
   WordpressRDSSG:
     Description: The Security Group to use with databases in the Wordpress project.
     Value: !Ref RDSSG
@@ -43,8 +45,22 @@ Outputs:
     Export:
       Name: WordpressWebSGGroupId
 
+  # --- IAM ---
+  S3MinimalInstanceRole:
+    Description: An instance role allowing read permissions on the albertocuesta-wordpress-install S3 bucket.
+    Value: !Ref S3MinimalInstanceRole
+    Export:
+      Name: S3MinimalInstanceRole
+
+  S3MinimalInstanceProfile:
+    Description: An instance profile allowing read permissions on the albertocuesta-wordpress-install S3 bucket.
+    Value: !Ref S3MinimalInstanceProfile
+    Export:
+      Name: S3MinimalInstanceProfile
+
 Resources:
 
+  # --- Networks ---
   MyVPC:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
     Type: 'AWS::EC2::VPC'
@@ -75,40 +91,6 @@ Resources:
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 01326c75-c2d3-4eea-9384-38308d2e60c0
-
-  WebSG:
-    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      VpcId: !Ref MyVPC
-      GroupDescription: Web front ends are open to traffic on port 80 for HTTP from all IPs and from to SSH traffic on port 22 from all IPs. Harden for real life, please.
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: 0.0.0.0/0
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: c70135ad-ad56-4037-9161-7885c1babb50
-
-  RDSSG:
-    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      VpcId: !Ref MyVPC
-      GroupDescription: Back end databases
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '3306'
-          ToPort: '3306'
-          SourceSecurityGroupId: !Ref WebSG
-    Metadata:
-      'AWS::CloudFormation::Designer':
-        id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
 
   MyInternetGateway:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
@@ -146,6 +128,86 @@ Resources:
       RouteTableId: !Ref MyRouteTable
       SubnetId: !Ref Subnet2
 
+  # --- Security Groups ---
+  WebSG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref MyVPC
+      GroupDescription: Web front ends are open to traffic on port 80 for HTTP from all IPs and from to SSH traffic on port 22 from all IPs. Harden for real life, please.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c70135ad-ad56-4037-9161-7885c1babb50
+
+  RDSSG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref MyVPC
+      GroupDescription: Back end databases
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          SourceSecurityGroupId: !Ref WebSG
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 3eaf1acb-f3e4-43e9-985b-04ba7f3fea31
+
+  # --- IAM ---
+  # https://aws.amazon.com/blogs/devops/authenticated-file-downloads-with-cloudformation/
+  S3MinimalInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+
+  # Allows to download s3 files from the wordpress install bucket
+  S3MinimalRolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: S3Minimal
+      PolicyDocument:
+        Statement:
+        # Note that there is a statement for object actions and another for bucket actions, and that they refer to different resources.
+        - Action:
+          - "s3:GetObject"
+          Effect: Allow
+          Resource: "arn:aws:s3:::albertocuesta-wordpress-install/*"
+        - Action:
+          - "s3:ListBucket" # Needed even if you know the path to the object
+          - "s3:ListAllMyBuckets" # Needed for console use
+          - "s3:GetBucketLocation" # Needed for console use
+          Effect: Allow
+          Resource: "arn:aws:s3:::albertocuesta-wordpress-install"
+      Roles:
+      - !Ref S3MinimalInstanceRole
+
+  # Profile with as few permissions as needed to perform the needed functions
+  S3MinimalInstanceProfile:
+      Type: "AWS::IAM::InstanceProfile"
+      Properties:
+        Path: "/"
+        Roles:
+          - !Ref S3MinimalInstanceRole
+
+  # --- S3 ---
   WordpressCode:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
     Type: 'AWS::S3::Bucket'

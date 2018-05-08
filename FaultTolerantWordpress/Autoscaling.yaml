@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'This template builds upon Network.yaml to create a Launch Configuration which is used by an Autoscaling Group'
+Resources:
+  WordpressLaunchConfiguration:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: String
+      AvailabilityZones:
+        - String
+      Cooldown: String
+      DesiredCapacity: String
+      HealthCheckGracePeriod: Integer
+      HealthCheckType: String
+      InstanceId: String
+      LaunchConfigurationName: 'Wordpress Launch Configuration'
+      LaunchTemplate" : LaunchTemplateSpecification
+      LifecycleHookSpecificationList: 
+        - LifecycleHookSpecification
+      LoadBalancerNames:
+        - String
+      MaxSize: String
+      MetricsCollection:
+        - MetricsCollection
+      MinSize: String
+      NotificationConfigurations:
+        - NotificationConfiguration
+      PlacementGroup: String
+      Tags:
+        - TagProperty
+      TargetGroupARNs:
+        - String
+      TerminationPolicies:
+        - String
+      VPCZoneIdentifier:
+        - String
+
+  WordpressAutoscalingGroup:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: Boolean
+      BlockDeviceMappings:
+        - BlockDeviceMapping
+      ClassicLinkVPCId: String
+      ClassicLinkVPCSecurityGroups:
+        - String
+      EbsOptimized: Boolean
+      IamInstanceProfile: !Ref S3MinimalInstanceProfile
+      ImageId: ami-e432069d # A Mapping should be created to make this multi-region
+      InstanceId: String
+      InstanceMonitoring: Boolean
+      InstanceType: t2.micro # In this case I think it is ok to hardcode this
+      KernelId: String
+      KeyName: String
+      PlacementTenancy: String
+      RamDiskId: String
+      SecurityGroups:
+        - SecurityGroup
+      SpotPrice: String
+      UserData: String

@@ -31,49 +31,6 @@ Mappings:
 
 Resources:
 
-  # https://aws.amazon.com/blogs/devops/authenticated-file-downloads-with-cloudformation/
-  S3MinimalInstanceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - ec2.amazonaws.com
-          Action:
-          - sts:AssumeRole
-      Path: "/"
-
-  # Allows to download s3 files from the wordpress install bucket
-  S3MinimalRolePolicies:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: S3Minimal
-      PolicyDocument:
-        Statement:
-        # Note that there is a statement for object actions and another for bucket actions, and that they refer to different resources.
-        - Action:
-          - "s3:GetObject"
-          Effect: Allow
-          Resource: "arn:aws:s3:::albertocuesta-wordpress-install/*"
-        - Action:
-          - "s3:ListBucket" # Needed even if you know the path to the object
-          - "s3:ListAllMyBuckets" # Needed for console use
-          - "s3:GetBucketLocation" # Needed for console use
-          Effect: Allow
-          Resource: "arn:aws:s3:::albertocuesta-wordpress-install"
-      Roles:
-      - !Ref S3MinimalInstanceRole
-
-  # Profile with as few permissions as needed to perform the needed functions
-  S3MinimalInstanceProfile:
-      Type: "AWS::IAM::InstanceProfile"
-      Properties:
-        Path: "/"
-        Roles:
-          - !Ref S3MinimalInstanceRole
-
   WordpressServer:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
     Type: "AWS::EC2::Instance"
@@ -83,7 +40,7 @@ Resources:
       AWS::CloudFormation::Authentication:  
         S3AccessCred:  
           type: S3  
-          roleName: !Ref S3MinimalInstanceRole  # I should use a read-only role here
+          roleName: !ImportValue S3MinimalInstanceRole
           buckets:  
             - albertocuesta-wordpress-install    
       AWS::CloudFormation::Init:
@@ -127,7 +84,7 @@ Resources:
         Timeout: PT5M
     Properties: 
       # https://hackernoon.com/attach-an-iam-role-to-an-ec2-instance-with-cloudformation-33c517a8d4c3
-      IamInstanceProfile: !Ref S3MinimalInstanceProfile
+      IamInstanceProfile: !ImportValue S3MinimalInstanceProfile
       ImageId: !FindInMap [ AMIs, !Ref 'AWS::Region', Name]
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
