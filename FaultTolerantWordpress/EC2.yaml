@@ -1,5 +1,6 @@
-
 AWSTemplateFormatVersion: 2010-09-09
+Description: 'This template builds upon Network.yaml to create a basic wordpress server that downloads some files from S3 using IAM policies and uses CFN-Init to configure itself'
+
 Outputs:
 
   WordpressServer:

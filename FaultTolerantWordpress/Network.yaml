@@ -1,4 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
+Description: 'This template creates some basic infrastructure with which to build a wordpress site. It creates a VPC with two public subnets in different availability zones, in the eu-west-1 (Ireland) region. It also creates a security group that allows HTTP and SSH traffic, as well as another one that allows MySQL traffic. It also creates two S3 buckets for code and content'
+
 Outputs:
 
   WordpressVPC:
