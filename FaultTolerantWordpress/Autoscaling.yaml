@@ -1,61 +1,136 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: 'This template builds upon Network.yaml to create a Launch Configuration which is used by an Autoscaling Group'
-Resources:
-  WordpressLaunchConfiguration:
-  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
-    Type: "AWS::AutoScaling::AutoScalingGroup"
-    Properties:
-      AutoScalingGroupName: String
-      AvailabilityZones:
-        - String
-      Cooldown: String
-      DesiredCapacity: String
-      HealthCheckGracePeriod: Integer
-      HealthCheckType: String
-      InstanceId: String
-      LaunchConfigurationName: 'Wordpress Launch Configuration'
-      LaunchTemplate" : LaunchTemplateSpecification
-      LifecycleHookSpecificationList: 
-        - LifecycleHookSpecification
-      LoadBalancerNames:
-        - String
-      MaxSize: String
-      MetricsCollection:
-        - MetricsCollection
-      MinSize: String
-      NotificationConfigurations:
-        - NotificationConfiguration
-      PlacementGroup: String
-      Tags:
-        - TagProperty
-      TargetGroupARNs:
-        - String
-      TerminationPolicies:
-        - String
-      VPCZoneIdentifier:
-        - String
+Parameters:
+  KeyNameParameter:
+    Description: EC2 Instance SSH Key
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
 
-  WordpressAutoscalingGroup:
+Resources:
+
+  WordpressLaunchConfiguration:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
     Type: "AWS::AutoScaling::LaunchConfiguration"
     Properties:
-      AssociatePublicIpAddress: Boolean
-      BlockDeviceMappings:
-        - BlockDeviceMapping
-      ClassicLinkVPCId: String
-      ClassicLinkVPCSecurityGroups:
-        - String
-      EbsOptimized: Boolean
-      IamInstanceProfile: !Ref S3MinimalInstanceProfile
+      IamInstanceProfile: !ImportValue S3MinimalInstanceProfile
       ImageId: ami-e432069d # A Mapping should be created to make this multi-region
-      InstanceId: String
-      InstanceMonitoring: Boolean
       InstanceType: t2.micro # In this case I think it is ok to hardcode this
-      KernelId: String
-      KeyName: String
-      PlacementTenancy: String
-      RamDiskId: String
+      KeyName: !Ref KeyNameParameter
       SecurityGroups:
-        - SecurityGroup
-      SpotPrice: String
-      UserData: String
+        - !ImportValue WordpressWebSG
+
+  WordpressAutoscalingGroup:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: WordpressAutoScalingGroup
+      HealthCheckGracePeriod: 10
+      HealthCheckType: ELB
+      LaunchConfigurationName: !Ref WordpressLaunchConfiguration
+      MaxSize: 4
+      MinSize: 2
+      # To use Classic Load Balancers use LoadBalancerNames instead
+      TargetGroupARNs:
+        - !Ref MyELBTargetGroup
+      VPCZoneIdentifier:
+        - !ImportValue WordpressSubnet1
+        - !ImportValue WordpressSubnet2
+
+  #https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-autoscaling.html#scenario-as-policy
+  ScaleUpPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref WordpressAutoscalingGroup
+      Cooldown: '1'
+      ScalingAdjustment: '1'
+
+  ScaleDownPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AdjustmentType: ChangeInCapacity
+      AutoScalingGroupName: !Ref WordpressAutoscalingGroup
+      Cooldown: '1'
+      ScalingAdjustment: '-1'
+
+  CPUAlarmHigh:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold: '75'
+      AlarmDescription: Alarm if CPU too high
+      Period: '300'
+      AlarmActions:
+        - !Ref ScaleUpPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref WordpressAutoscalingGroup
+      ComparisonOperator: GreaterThanThreshold
+      MetricName: CPUUtilization
+
+  CPUAlarmLow:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      EvaluationPeriods: '1'
+      Statistic: Average
+      Threshold: '25'
+      AlarmDescription: Alarm if CPU too low
+      Period: '300'
+      AlarmActions:
+        - !Ref ScaleDownPolicy
+      Namespace: AWS/EC2
+      Dimensions:
+        - Name: WordpressAutoscalingGroup
+          Value: !Ref WordpressAutoscalingGroup
+      ComparisonOperator: LessThanThreshold
+      MetricName: CPUUtilization
+
+  # --- Copied from ELB.yaml --- Needs modularization ---
+  MyELB:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets:
+        - !ImportValue WordpressSubnet1
+        - !ImportValue WordpressSubnet2
+      SecurityGroups:
+        - !ImportValue WordpressWebSG
+
+  MyELBTargetGroup: 
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html   
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckPath: /healthy.html
+      HealthCheckPort: 80
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 6
+      HealthyThresholdCount: 2
+      Name: MyELBTargetGroup
+      Port: 80
+      Protocol: HTTP
+      VpcId: !ImportValue WordpressVPC
+
+  MyELBListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties: 
+      DefaultActions:
+        - TargetGroupArn: !Ref MyELBTargetGroup
+          Type: forward
+      LoadBalancerArn: !Ref MyELB
+      Port: 80
+      Protocol: HTTP
+
+  MyRecordSet:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+    Type: 'AWS::Route53::RecordSet'    
+    Properties:
+      Name: albertocuesta.click.
+      HostedZoneName: albertocuesta.click.
+      Type: A
+      AliasTarget: 
+        DNSName: !GetAtt MyELB.DNSName
+        HostedZoneId: !GetAtt MyELB.CanonicalHostedZoneID
+
