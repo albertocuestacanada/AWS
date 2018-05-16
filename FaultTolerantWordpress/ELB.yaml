@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'This template builds upon Network.yaml and EC2.yaml to create an Application Load Balancer behind a DNS Alias record'
+Description: 'This template builds upon Network.yaml and EC2.yaml to create an Application Load Balancer behind a DNS Alias record -- Do not use if you are going to load the AutoScaling stacks'
 Resources:
   MyELB:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
